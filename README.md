@@ -75,7 +75,94 @@ O impacto real do processamento paralelo fica evidente no teste extremo com **1 
 ### 4. Eficiência no Uso de Sincronismo
 Os ótimos tempos obtidos confirmam a eficiência da lógica aplicada com os mecanismos de sincronização (`pthreads`). A estratégia de acumular somas locais temporárias e aplicar a trava do `mutex` apenas uma vez no encerramento de cada thread evitou o problema crítico de *overhead* por contenção de travas, garantindo fluidez e performance máxima ao hardware utilizado.
 
+# Relatório de Benchmarks e Desempenho ⚔️
+**Responsável:** Dev 2 - Andrew
 
+
+# Ambiente de Testes (Hardware e SO)
+
+Os testes de benchmark foram executados no seguinte ambiente computacional:
+
+- **Sistema Operacional:** Microsoft Windows 11 (Ambiente executado via VS Code / PowerShell)
+- **Processador:** AMD Ryzen 5 7535HS (Arquitetura Rembrandt - 6nm) com Radeon Graphics
+- **Núcleos / Threads:** 6 Núcleos físicos / 12 Processadores lógicos (Tecnologia SMT Ativa)
+- **TDP Máximo:** 45.0 W
+
+
+# Resultados Obtidos
+
+A tabela abaixo consolida os dados de tempo de execução e o ganho de desempenho (*speedup*) obtidos ao comparar o processamento sequencial e o processamento paralelo utilizando diferentes quantidades de *threads*, sob uma carga fixa de **1.000.000.000 (1 bilhão) de elementos**.
+
+| Tamanho do Vetor (N) | Quantidade de Threads | Tempo Sequencial (s) | Tempo Paralelo (s) | Speedup Obtido |
+| :------------------: | :-------------------: | :------------------: | :----------------: | :------------: |
+| 1.000.000.000 | 1 | 93.768346 | 90.863439 | **1.03x** |
+| 1.000.000.000 | 2 | 69.337095 | 53.973848 | **1.28x** |
+| 1.000.000.000 | 3 | 62.061597 | 39.123334 | **1.59x** |
+| 1.000.000.000 | 4 | 81.147965 | 41.602109 | **1.95x** |
+| 1.000.000.000 | 5 | 66.272848 | 29.697844 | **2.23x** |
+| 1.000.000.000 | 6 | 65.597486 | 29.526060 | **2.22x** |
+| 1.000.000.000 | 8 | 81.017747 | 27.259575 | **2.97x** |
+| 1.000.000.000 | 9 | 67.569243 | 26.163510 | **2.58x** |
+| 1.000.000.000 | 10 | 67.880849 | 24.191588 | **2.81x** |
+| 1.000.000.000 | 11 | 64.580439 | 25.237038 | **2.56x** |
+| 1.000.000.000 | 12 | 66.311644 | 25.461271 | **2.60x** |
+
+
+# Conclusões da Análise
+
+A partir dos dados coletados sob a arquitetura do processador **AMD Ryzen 5 7535HS**, que dispõe de **6 núcleos físicos e 12 processadores lógicos (SMT)**, as seguintes conclusões foram obtidas.
+
+## 1. Escalabilidade até o Limite dos Núcleos Físicos
+
+O algoritmo paralelo apresentou ganho de desempenho consistente conforme o número de *threads* foi aumentado até atingir **5 e 6 threads**, reduzindo o tempo de processamento de aproximadamente **90,86 segundos** para cerca de **29 segundos**.
+
+O ganho observado nessa faixa (aproximadamente **2,23x**) está diretamente relacionado aos **6 núcleos físicos** disponíveis no processador, permitindo que cada thread seja executada em um núcleo dedicado sem competição direta pelos recursos internos da CPU.
+
+
+## 2. Efeito do SMT (Simultaneous Multithreading) e Limitações de Desempenho
+
+Embora o processador ofereça **12 processadores lógicos** através da tecnologia **SMT**, o aumento do número de threads além da quantidade de núcleos físicos não resultou em crescimento linear do desempenho.
+
+O melhor resultado foi obtido utilizando **8 threads**, alcançando um **speedup de 2,97x**.
+
+Como o cálculo do produto escalar possui baixa intensidade computacional, porém elevada demanda de leitura de memória, duas threads lógicas compartilhando o mesmo núcleo físico passam a disputar os mesmos recursos internos da CPU, aumentando o overhead de gerenciamento e reduzindo a eficiência do paralelismo.
+
+Esse comportamento explica a queda do speedup para **2,56x** com **11 threads**, estabilizando em aproximadamente **2,60x** com **12 threads**.
+
+
+## 3. Gargalo de Barramento de Memória (*Memory Bound*)
+
+O processamento de um vetor contendo **1 bilhão de elementos** evidencia um comportamento clássico de aplicações **Memory Bound**.
+
+Apesar da elevada capacidade de processamento do processador, a velocidade de acesso à memória RAM torna-se o principal fator limitante da execução. Dessa forma, grande parte do tempo é consumida aguardando a chegada dos dados à CPU, provocando ciclos de espera (*memory stalls*).
+
+Esse gargalo impede que o speedup se aproxime do valor teórico ideal de aproximadamente **6x**, correspondente ao número de núcleos físicos disponíveis.
+
+
+## 4. Flutuação dos Tempos Sequenciais e Comportamento Térmico
+
+Os tempos obtidos durante as execuções sequenciais oscilaram entre aproximadamente **62,06 segundos** e **93,76 segundos**.
+
+Essa variação é esperada em ambientes computacionais de uso geral submetidos a cargas intensivas e pode ser explicada principalmente pelos seguintes fatores:
+
+### • Gerenciamento Dinâmico de Frequência (*Thermal Throttling*)
+
+O elevado esforço computacional gerado pelas operações envolvendo bilhões de elementos aumenta significativamente a temperatura do processador.
+
+Como o Ryzen 5 7535HS possui **TDP máximo de 45 W**, o sistema reduz automaticamente a frequência de operação (Turbo Boost) para manter a temperatura dentro dos limites seguros de funcionamento.
+
+### • Escalonamento do Sistema Operacional
+
+Durante a execução dos testes, processos e serviços executados em segundo plano pelo Windows também competem pelos recursos do processador.
+
+Essa disputa pelo tempo de CPU (*timeslice*) provoca pequenas variações entre diferentes execuções, influenciando principalmente os tempos do algoritmo sequencial.
+
+
+# Considerações Finais
+
+Os resultados demonstram que a implementação paralela utilizando **Pthreads** proporcionou ganhos significativos de desempenho quando comparada à versão sequencial.
+
+Entretanto, também evidenciam limitações inerentes ao hardware, como a saturação dos núcleos físicos, os efeitos do SMT e o gargalo imposto pela largura de banda da memória RAM. Dessa forma, observa-se que o aumento indiscriminado do número de threads não garante ganhos proporcionais de desempenho, sendo fundamental considerar as características da arquitetura do processador e da aplicação desenvolvida.
 
 
 # Relatório de Benchmarks e Desempenho ⚔️

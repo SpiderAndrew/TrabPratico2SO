@@ -234,3 +234,71 @@ No cenário massivo de 1 bilhão de elementos, a versão sequencial demorou até
 
 ## 5. Parecer Final do Desenvolvedor (Dev 3)
 A implementação do paralelismo provou-se indispensável para viabilizar cargas intensas de dados sem comprometer a fluidez da aplicação. Para o hardware testado, a configuração ideal de execução situa-se entre **2 e 4 threads**, faixa na qual o balanço entre o poder dos núcleos físicos e o custo de sincronização atinge sua máxima eficiência operacional.
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+# Análise Comparativa dos Resultados ⚔️
+
+## Responsável: Dev 4 - Gladston
+
+# Análise Comparativa dos Resultados ⚔️
+
+## Responsável: Dev 4 - Gladston
+
+### Introdução
+
+Após a obtenção dos resultados individuais de desempenho por cada integrante da equipe, esta seção apresenta uma análise comparativa dos experimentos realizados, com o objetivo de avaliar o comportamento da implementação paralela em diferentes configurações de hardware.
+
+Os experimentos consistiram na comparação entre a versão sequencial e a versão paralela do algoritmo, utilizando diferentes quantidades de threads e diferentes tamanhos de vetores. Para cada execução foram registrados o tempo de processamento da implementação sequencial, o tempo da implementação paralela e o Speedup obtido, permitindo analisar a eficiência da paralelização e a influência das características de cada máquina sobre o desempenho alcançado.
+
+Inicialmente são apresentados os resultados obtidos na máquina utilizada pelo responsável desta análise, considerando quatro diferentes tamanhos de entrada. Em seguida, é realizada uma comparação entre os resultados obtidos pelos demais integrantes, utilizando como referência o experimento executado com vetores de 1 bilhão de elementos.
+
+## Dados Experimentais
+
+A Tabela 1 apresenta os tempos de execução obtidos para cada tamanho de vetor analisado, bem como a quantidade de threads utilizada e o Speedup correspondente. Esses dados servem como base para a construção dos gráficos e para a discussão apresentada nas seções seguintes.
+
+### Tabela 1 – Resultados obtidos durante os experimentos
+
+| Tamanho do Vetor | Threads | Tempo Sequencial (s) | Tempo Paralelo (s) | Speedup |
+|-----------------:|--------:|---------------------:|-------------------:|---------:|
+|10.000.000|2|0,0232|0,0171|1,36|
+|10.000.000|4|0,0240|0,0130|1,85|
+|10.000.000|6|0,0225|0,0162|1,39|
+|10.000.000|8|0,0261|0,0107|2,42|
+|10.000.000|10|0,0251|0,0117|2,13|
+|10.000.000|12|0,0247|0,0089|2,78|
+|50.000.000|2|0,1141|0,0640|1,78|
+|50.000.000|4|0,1124|0,0524|2,14|
+|50.000.000|6|0,1054|0,0426|2,47|
+|50.000.000|8|0,1122|0,0405|2,76|
+|50.000.000|10|0,1075|0,0392|2,74|
+|50.000.000|12|0,1059|0,0400|2,65|
+|200.000.000|2|0,609|0,252|2,41|
+|200.000.000|4|0,457|0,202|2,26|
+|200.000.000|6|0,422|0,133|3,16|
+|200.000.000|8|0,413|0,143|2,89|
+|200.000.000|10|0,404|0,135|2,99|
+|200.000.000|12|0,433|0,125|3,45|
+|1.000.000.000|1|86,575|66,399|1,30|
+|1.000.000.000|2|93,201|45,971|2,03|
+|1.000.000.000|3|88,209|40,753|2,16|
+|1.000.000.000|4|115,455|35,774|3,23|
+|1.000.000.000|5|77,476|30,536|2,54|
+|1.000.000.000|6|109,113|35,800|3,05|
+|1.000.000.000|7|80,289|31,912|2,52|
+|1.000.000.000|8|113,817|22,713|5,01|
+|1.000.000.000|9|79,920|11,275|7,09|
+|1.000.000.000|10|109,025|19,912|5,48|
+|1.000.000.000|11|81,666|21,859|3,74|
+|1.000.000.000|12|115,493|23,947|4,82|
+
+
+
+
+| Máquina | Processador     | Núcleos | Threads | Melhor Speedup | Threads do Pico |
+| ------- | --------------- | ------- | ------- | -------------: | --------------: |
+| Dev 1   | Intel i5-1335U  | 10      | 12      |           3,11 |              10 |
+| Dev 2   | Ryzen 5 7535HS  | 6       | 12      |           2,97 |               8 |
+| Dev 3   | Ryzen 5 7500F   | 6       | 12      |           3,40 |               2 |
+| Dev 4   | Intel i7-1255U  | 10      | 12      |           7,09 |               9 |
+

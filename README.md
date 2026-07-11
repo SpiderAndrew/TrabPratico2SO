@@ -23,6 +23,95 @@ Abaixo estão apresentados os membros acadêmicos responsáveis pela execução 
 | Gabriel Henrique de Souza Nazaré | 22053696 |
 | Gladston Gabriel Tavares Almeida | 22400546 |
 
+## Estrutura do Projeto
+
+Para que o jogo funcione corretamente, certifique-se de que os seguintes arquivos estejam exatamente na mesma pasta:
+
+- `main.c`: O código-fonte principal em C.
+- `Background.png`: Imagem do cenário de fundo.
+- `boss.png`: Sprite sheet da animação do Boss (1 linha, 8 colunas).
+- `guerreiro.png`: Sprite sheet da animação do Guerreiro (5 linhas, 8 colunas).
+
+---
+
+## Como preparar o ambiente e compilar
+
+### Windows
+
+#### 1. Instalar o MSYS2
+* Acesse [msys2.org](https://www.msys2.org/) e baixe o instalador.
+* Siga a instalação padrão (recomendado manter na pasta `C:\msys64`).
+* Ao finalizar, deixe a caixa marcada para abrir o terminal do MSYS2.
+
+#### 2. Instalar o Compilador e a Raylib
+No terminal do MSYS2, execute os comandos abaixo, confirmando com **Y** e pressionando Enter quando solicitado:
+
+**Instalar o compilador GCC:**
+```bash
+pacman -S mingw-w64-ucrt-x86_64-gcc
+```
+
+**Instalar a Raylib:**
+```bash
+pacman -S mingw-w64-ucrt-x86_64-raylib
+```
+
+#### 3. Configurar o PATH no Windows
+* Pressione a tecla **Windows**, digite **Variáveis de ambiente** e clique em "Editar as variáveis de ambiente do sistema".
+* Clique no botão **Variáveis de Ambiente...**.
+* Na lista inferior (Variáveis do sistema), procure por **Path** e dê um duplo clique.
+* Clique em **Novo** e cole o seguinte diretório: `C:\msys64\ucrt64\bin`
+* Clique em **OK** em todas as janelas para salvar as configurações.
+
+#### 4. Compilar o Código
+* Abra o seu editor de código na pasta do projeto. *(Feche e abra novamente se já estava aberto para reconhecer o novo PATH)*.
+* No terminal do editor, execute o comando estático abaixo (A flag `-static` embute as bibliotecas, permitindo rodar em outros PCs):
+```bash
+gcc main.c -o game.exe -lraylib -lgdi32 -lwinmm -pthread -static
+```
+
+#### 5. Executar o Jogo
+```bash
+.\game.exe
+```
+
+---
+
+### Linux (Debian/Ubuntu/Mint)
+
+#### 1. Instalar o Compilador e Dependências
+Abra o terminal e instale o GCC e a versão de desenvolvimento da Raylib (disponível nos repositórios oficiais da maioria das distros baseadas em Debian):
+```bash
+sudo apt update
+sudo apt install gcc libraylib-dev
+```
+
+*(Nota: Caso a Raylib não esteja nos repositórios da sua distribuição, você precisará [compilar a Raylib a partir do código-fonte](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux)).*
+
+#### 2. Compilar o Código
+Navegue até a pasta onde os arquivos do jogo estão salvos e execute o comando de compilação linkando todas as bibliotecas necessárias para interface gráfica e threads no Linux:
+```bash
+gcc main.c -o game -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+```
+
+#### 3. Executar o Jogo
+```bash
+./game
+```
+
+---
+
+## Como Jogar
+
+1. Ao abrir o programa, o terminal pedirá a **Vida do Boss**. Digite um valor adequado (Recomendado: `10000000` a `100000000`).
+2. Digite a **quantidade de guerreiros** (threads) que irão processar o ataque simultaneamente (ex: `4`, `8` ou `12`).
+3. A janela gráfica abrirá com o cenário.
+4. Pressione **ESPAÇO** para enviar o seu exército.
+5. Ao derrotar o Boss, o jogo exibirá:
+   - Tempo de execução Sequencial (1 guerreiro).
+   - Tempo de execução Paralelo (Múltiplos guerreiros).
+   - O **Speedup** (Bônus de dano baseado na eficiência do processamento paralelo).
+
 # Relatório de Benchmarks e Desempenho ⚔️
 **Projeto:** Simulador de Dano (Produto Escalar) - "The Battle Threads"  
 **Responsável:** Dev 1 - Francisco  
@@ -299,7 +388,7 @@ A partir dos dados apresentados na Tabela 1, foram construídos gráficos relaci
 
 *Figura 1 – Speedup em função da quantidade de threads para vetores de 10 milhões de elementos.*
 
-(Inserir gráfico aqui)
+![Speedup para vetores de 10 milhões](resultados/graficos/speedup_10_milhoes.png)
 
 </div>
 
@@ -313,7 +402,7 @@ Esse comportamento pode ser explicado pelo fato de que, para problemas relativam
 
 *Figura 2 – Speedup em função da quantidade de threads para vetores de 50 milhões de elementos.*
 
-(Inserir gráfico aqui)
+![Speedup para vetores de 50 milhões](resultados/graficos/speedup_50_milhoes.png)
 
 </div>
 
@@ -327,7 +416,7 @@ Comparando esse resultado com o experimento anterior, percebe-se que a maior car
 
 *Figura 3 – Speedup em função da quantidade de threads para vetores de 200 milhões de elementos.*
 
-(Inserir gráfico aqui)
+![Speedup para vetores de 200 milhões](resultados/graficos/speedup_200_milhoes.png)
 
 </div>
 
@@ -355,7 +444,23 @@ A Tabela 2 as especificações das maquinas usadas para fins de comparação fut
 
 *Figura 4 – Speedup em função da quantidade de threads para vetores de 1 bilhão de elementos.*
 
-(Inserir gráfico aqui)
+![Speedup para vetores de 1 bilhão](resultados/graficos/Comparacaom2.png)
+
+</div>
+
+<div align="center">
+
+*Figura 5 – Speedup em função da quantidade de threads para vetores de 1 bilhão de elementos.*
+
+![Speedup para vetores de 1 bilhão](resultados/graficos/Comparacaom3.png)
+
+</div>
+
+<div align="center">
+
+*Figura 6 – Speedup em função da quantidade de threads para vetores de 1 bilhão de elementos.*
+
+![Speedup para vetores de 1 bilhão](resultados/graficos/Comparacaom4.png)
 
 </div>
 
@@ -366,16 +471,6 @@ Entretanto, observa-se que o crescimento do Speedup não ocorreu de forma linear
 ## Comparação entre as Máquinas
 
 Após a análise dos experimentos realizados na máquina utilizada pelo responsável desta seção, realizou-se uma comparação entre os resultados obtidos pelos demais integrantes da equipe. Para garantir a equivalência dos testes, foram considerados exclusivamente os experimentos executados utilizando vetores de *1 bilhão de elementos*, uma vez que essa configuração foi a única presente em todas as máquinas avaliadas.
-
-A Figura 5 apresenta a comparação do Speedup obtido em função da quantidade de threads para cada computador utilizado durante os experimentos.
-
-<div align="center">
-
-*Figura 5 – Comparação do Speedup obtido nas diferentes máquinas para vetores de 1 bilhão de elementos.*
-
-(Inserir gráfico comparativo aqui)
-
-</div>
 
 Observa-se que todas as máquinas apresentaram ganhos de desempenho em relação à execução sequencial, entretanto, a evolução do Speedup variou significativamente entre elas.
 

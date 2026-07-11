@@ -234,3 +234,168 @@ No cenário massivo de 1 bilhão de elementos, a versão sequencial demorou até
 
 ## 5. Parecer Final do Desenvolvedor (Dev 3)
 A implementação do paralelismo provou-se indispensável para viabilizar cargas intensas de dados sem comprometer a fluidez da aplicação. Para o hardware testado, a configuração ideal de execução situa-se entre **2 e 4 threads**, faixa na qual o balanço entre o poder dos núcleos físicos e o custo de sincronização atinge sua máxima eficiência operacional.
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+# Análise Comparativa dos Resultados ⚔️
+
+## Responsável: Dev 4 - Gladston
+
+### Introdução
+
+Após a obtenção dos resultados individuais de desempenho por cada integrante da equipe, esta seção apresenta uma análise comparativa dos experimentos realizados, com o objetivo de avaliar o comportamento da implementação paralela em diferentes configurações de hardware.
+
+Os experimentos consistiram na comparação entre a versão sequencial e a versão paralela do algoritmo, utilizando diferentes quantidades de threads e diferentes tamanhos de vetores. Para cada execução foram registrados o tempo de processamento da implementação sequencial, o tempo da implementação paralela e o Speedup obtido, permitindo analisar a eficiência da paralelização e a influência das características de cada máquina sobre o desempenho alcançado.
+
+Inicialmente são apresentados os resultados obtidos na máquina utilizada pelo responsável desta análise, considerando quatro diferentes tamanhos de entrada. Em seguida, é realizada uma comparação entre os resultados obtidos pelos demais integrantes, utilizando como referência o experimento executado com vetores de 1 bilhão de elementos.
+
+## Dados Experimentais
+
+A Tabela 1 apresenta os tempos de execução obtidos para cada tamanho de vetor analisado, bem como a quantidade de threads utilizada e o Speedup correspondente. Esses dados servem como base para a construção dos gráficos e para a discussão apresentada nas seções seguintes.
+
+### Tabela 1 – Resultados obtidos durante os experimentos
+
+
+| Tamanho do Vetor | Threads | Tempo Sequencial (s) | Tempo Paralelo (s) | Speedup |
+|-----------------:|--------:|---------------------:|-------------------:|---------:|
+|10.000.000|2|0,0232|0,0171|1,36|
+|10.000.000|4|0,0240|0,0130|1,85|
+|10.000.000|6|0,0225|0,0162|1,39|
+|10.000.000|8|0,0261|0,0107|2,42|
+|10.000.000|10|0,0251|0,0117|2,13|
+|10.000.000|12|0,0247|0,0089|2,78|
+|50.000.000|2|0,1141|0,0640|1,78|
+|50.000.000|4|0,1124|0,0524|2,14|
+|50.000.000|6|0,1054|0,0426|2,47|
+|50.000.000|8|0,1122|0,0405|2,76|
+|50.000.000|10|0,1075|0,0392|2,74|
+|50.000.000|12|0,1059|0,0400|2,65|
+|200.000.000|2|0,609|0,252|2,41|
+|200.000.000|4|0,457|0,202|2,26|
+|200.000.000|6|0,422|0,133|3,16|
+|200.000.000|8|0,413|0,143|2,89|
+|200.000.000|10|0,404|0,135|2,99|
+|200.000.000|12|0,433|0,125|3,45|
+|1.000.000.000|1|86,575|66,399|1,30|
+|1.000.000.000|2|93,201|45,971|2,03|
+|1.000.000.000|3|88,209|40,753|2,16|
+|1.000.000.000|4|115,455|35,774|3,23|
+|1.000.000.000|5|77,476|30,536|2,54|
+|1.000.000.000|6|109,113|35,800|3,05|
+|1.000.000.000|7|80,289|31,912|2,52|
+|1.000.000.000|8|113,817|22,713|5,01|
+|1.000.000.000|9|79,920|11,275|7,09|
+|1.000.000.000|10|109,025|19,912|5,48|
+|1.000.000.000|11|81,666|21,859|3,74|
+|1.000.000.000|12|115,493|23,947|4,82|
+
+## Análise dos Resultados
+
+A partir dos dados apresentados na Tabela 1, foram construídos gráficos relacionando o Speedup com a quantidade de threads utilizada em cada experimento. Essa análise permite observar o comportamento da implementação paralela conforme o aumento da carga computacional e identificar como a eficiência da paralelização varia para diferentes tamanhos de entrada.
+
+### Vetores de 10 Milhões de Elementos
+
+<div align="center">
+
+**Figura 1 – Speedup em função da quantidade de threads para vetores de 10 milhões de elementos.**
+
+*(Inserir gráfico aqui)*
+
+</div>
+
+Observa-se que, para um vetor contendo 10 milhões de elementos, o aumento da quantidade de threads proporcionou ganhos moderados de desempenho. O maior Speedup obtido foi de **2,78**, utilizando **12 threads**.
+
+Esse comportamento pode ser explicado pelo fato de que, para problemas relativamente pequenos, o tempo gasto na criação, distribuição e sincronização das threads representa uma parcela significativa do tempo total de execução. Dessa forma, embora o paralelismo reduza o tempo de processamento, parte desse ganho é compensada pelo overhead introduzido pelo gerenciamento das threads.
+
+### Vetores de 50 Milhões de Elementos
+
+<div align="center">
+
+**Figura 2 – Speedup em função da quantidade de threads para vetores de 50 milhões de elementos.**
+
+*(Inserir gráfico aqui)*
+
+</div>
+
+Com o aumento do tamanho do vetor para 50 milhões de elementos, observa-se uma melhoria no aproveitamento do paralelismo. O Speedup máximo registrado foi de **2,76**, obtido com **8 threads**, mantendo desempenho semelhante até 10 threads.
+
+Comparando esse resultado com o experimento anterior, percebe-se que a maior carga computacional reduz proporcionalmente o impacto do overhead de criação das threads, permitindo que uma parcela maior do tempo de execução seja dedicada ao processamento efetivo dos dados.
+
+### Vetores de 200 Milhões de Elementos
+
+<div align="center">
+
+**Figura 3 – Speedup em função da quantidade de threads para vetores de 200 milhões de elementos.**
+
+*(Inserir gráfico aqui)*
+
+</div>
+
+Para vetores contendo 200 milhões de elementos, verifica-se uma evolução mais evidente da eficiência do algoritmo paralelo. O maior Speedup observado foi de **3,45**, utilizando **12 threads**, representando um ganho significativamente superior aos experimentos realizados com entradas menores.
+
+Nesse cenário, a quantidade de trabalho distribuída entre as threads torna-se suficientemente grande para compensar os custos associados ao paralelismo, permitindo melhor aproveitamento dos recursos disponíveis no processador.
+
+### Vetores de 1 Bilhão de Elementos
+
+A Tabela 2 as especificações das maquinas usadas para fins de comparação futura após a apresentação dos resultados obtidos.
+
+### Tabela 2 – Especificações das maquinas
+
+| Máquina | Processador     | Núcleos | Threads | Melhor Speedup | Threads do Pico |
+| ------- | --------------- | ------- | ------- | -------------: | --------------: |
+| Dev 1   | Intel i5-1335U  | 10      | 12      |           3,11 |              10 |
+| Dev 2   | Ryzen 5 7535HS  | 6       | 12      |           2,97 |               8 |
+| Dev 3   | Ryzen 5 7500F   | 6       | 12      |           3,40 |               2 |
+| Dev 4   | Intel i7-1255U  | 10      | 12      |           7,09 |               9 |
+
+
+
+
+<div align="center">
+
+**Figura 4 – Speedup em função da quantidade de threads para vetores de 1 bilhão de elementos.**
+
+*(Inserir gráfico aqui)*
+
+</div>
+
+O experimento realizado com vetores de 1 bilhão de elementos apresentou os maiores ganhos de desempenho observados durante os testes. O Speedup máximo foi de **7,09**, alcançado com **9 threads**, demonstrando que aplicações com elevada carga computacional tendem a se beneficiar significativamente da execução paralela.
+
+Entretanto, observa-se que o crescimento do Speedup não ocorreu de forma linear. Após atingir seu melhor desempenho, algumas configurações apresentaram redução no ganho obtido. Esse comportamento evidencia que o aumento da quantidade de threads nem sempre resulta em maior desempenho, devido ao overhead de sincronização, ao compartilhamento de recursos do processador e às limitações impostas pela arquitetura da máquina.
+
+## Comparação entre as Máquinas
+
+Após a análise dos experimentos realizados na máquina utilizada pelo responsável desta seção, realizou-se uma comparação entre os resultados obtidos pelos demais integrantes da equipe. Para garantir a equivalência dos testes, foram considerados exclusivamente os experimentos executados utilizando vetores de **1 bilhão de elementos**, uma vez que essa configuração foi a única presente em todas as máquinas avaliadas.
+
+A Figura 5 apresenta a comparação do Speedup obtido em função da quantidade de threads para cada computador utilizado durante os experimentos.
+
+<div align="center">
+
+**Figura 5 – Comparação do Speedup obtido nas diferentes máquinas para vetores de 1 bilhão de elementos.**
+
+*(Inserir gráfico comparativo aqui)*
+
+</div>
+
+Observa-se que todas as máquinas apresentaram ganhos de desempenho em relação à execução sequencial, entretanto, a evolução do Speedup variou significativamente entre elas.
+
+A Máquina 4 apresentou o melhor desempenho geral, atingindo um Speedup máximo de **7,09**, resultado significativamente superior aos demais equipamentos analisados. Esse comportamento demonstra que sua arquitetura conseguiu aproveitar de forma mais eficiente o paralelismo oferecido pela aplicação.
+
+A Máquina 2 apresentou crescimento gradual do Speedup, alcançando seu melhor resultado com **8 threads**, mantendo posteriormente pequenas oscilações. Esse comportamento indica uma utilização relativamente equilibrada dos recursos computacionais disponíveis.
+
+Já a Máquina 3 apresentou um comportamento distinto das demais. Embora tenha obtido um Speedup elevado utilizando apenas duas threads, observou-se redução gradual do desempenho à medida que novas threads foram adicionadas. Esse resultado sugere que fatores como sincronização, gerenciamento das threads pelo sistema operacional ou limitações específicas do hardware influenciaram diretamente a eficiência da paralelização.
+
+No caso da Máquina 1, os resultados disponíveis restringem-se ao experimento realizado com **10 threads**, impossibilitando uma análise da evolução do Speedup em função do aumento da quantidade de threads. Ainda assim, o resultado obtido contribui para a comparação geral entre os diferentes computadores utilizados.
+
+
+## Conclusão
+
+A análise comparativa realizada neste trabalho permitiu avaliar o comportamento da implementação paralela em diferentes cenários de execução e arquiteturas de hardware.
+
+Os resultados demonstraram que o paralelismo proporcionou ganhos expressivos de desempenho, especialmente para problemas envolvendo grandes volumes de dados. À medida que o tamanho do vetor aumentou, observou-se crescimento do Speedup, evidenciando melhor aproveitamento dos recursos computacionais disponíveis.
+
+Entretanto, também foi possível verificar que a utilização de um número maior de threads nem sempre resulta em maior desempenho. Após determinado ponto, fatores como sincronização, competição por recursos compartilhados e overhead de gerenciamento passam a limitar os ganhos obtidos, reduzindo a eficiência da paralelização.
+
+A comparação entre as diferentes máquinas demonstrou que o desempenho de aplicações paralelas depende não apenas da implementação do algoritmo, mas também das características da plataforma de execução. Dessa forma, a definição da quantidade ideal de threads deve considerar tanto a natureza da aplicação quanto os recursos disponibilizados pelo hardware utilizado.
+
+Conclui-se, portanto, que a programação paralela utilizando múltiplas threads representa uma ferramenta fundamental para aplicações de alto desempenho, desde que utilizada de forma adequada e considerando as limitações impostas pela arquitetura computacional.
